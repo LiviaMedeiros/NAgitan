@@ -121,6 +121,7 @@ $(function() {
 @font-face {font-family:Meguca;src:url("/magireco/data/static/font.ttf")}
 @font-face {font-family:Koruri;src:url(//cdn.plusminus.io/font/webkoruri/20140628/WebKoruri.eot);src:url(//cdn.plusminus.io/font/webkoruri/20140628/WebKoruri.woff) format('woff'),url(//cdn.plusminus.io/font/webkoruri/20140628/WebKoruri.ttf) format('truetype')}
 body {background:#eee;color:#000;font-size:14px;font-family:Koruri,Sans-Serif}
+::selection{background:transparent}
 a {color:inherit;text-decoration:inherit}
 #wrapper {display:flex;justify-content:center;align-items:center;height:400px}
 #connecting {position:fixed;right:0;bottom:0;width:334px;height:54px;background:url("/magireco/NAgitan/img/connecting.png");opacity:0;transition:opacity 0.4s}
