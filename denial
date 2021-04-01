@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!-- 엘샤#2343 -->
+<html>
+<head>
+<title>NAgitan</title>
+<link rel="icon" href="/favicon.ico" />
+<meta property="og:title" content="NAgitan" />
+<meta property="og:image" content="/magireco/NAgitan/img/Oh.png" />
+<meta property="og:description" content="denial" />
+<meta property="og:image:width" content="300" />
+<meta property="og:image:height" content="150" />
+<meta charset="utf-8" />
+<style>@keyframes snaa{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@font-face{font-family:Meguca;src:url("/magireco/data/static/font.ttf")} body{background:#000000;cursor:wait}#alina{position:fixed;width:100%;height:100%;top:0;left:0;z-index:99;display:flex;justify-content:center;align-items:center;margin:0;padding:0}#sana{position:relative;height:100px;width:86px;transform:scale(.5);transition:all .2s ease-in;opacity:1}#mumi{position:fixed;z-index:200;right:0;bottom:0;width:334px;height:54px;cursor:not-allowed;background:url("/magireco/NAgitan/img/connecting.png")}#mumi.why{width:128px;height:128px;background:url("/magireco/NAgitan/img/mumiwhy.png")}#snaa{font-weight:bold;line-height:12px;font-family:monospace;white-space:pre;text-align:center;z-index:100}#snaa > span{animation:3s linear 0s infinite normal none running snaa;cursor:vertical-text;display:inline-block;vertical-align:top;width:6px;height:12px}#snaa > span:hover{animation-play-state:paused;font-family:Meguca;font-size:48px!important}</style>
+<script>
+"use strict";const ImSuchAFool = function(snaa)
+{const  SNAA = document.getElementById ("snaa");
+ let              _=99;///;             snaa   ;
+ for ( const s   of                    snaa
+    ){ const n = Object.keys(s       )[ 0x0   ];
+ for ( const a   of    s    [n].split('')
+    ){ const A = document.createElement("span");
+             A .style.color/*a*/="#"+    n     ;
+             A .style.animationDelay =  Math.random(
+    )+"s" ;  A .style.fontSize =11+0x2* Math.random(
+    )+"px";  A .textContent =            a     ;
+          SNAA .appendChild (            A    ); if
+          (!-_--){_=99;///;              A     ;
+          SNAA .appendChild (document.createElement(
+             atob("YnI="               /*a*/)));}}}}
+</script>
+</head>
+<body><div id="mumi"></div><div id="alina"><div id="snaa"></div><div id="sana"><div class="cube h1 w1 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w1 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w1 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w2 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w2 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w2 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w3 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w3 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h1 w3 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w1 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w1 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w1 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w2 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w2 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w2 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w3 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w3 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h2 w3 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w1 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w1 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w1 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w2 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w2 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w2 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w3 l1"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w3 l2"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div><div class="cube h3 w3 l3"><div class="face top"></div><div class="face left"></div><div class="face right"></div></div></div></div></body>
+</html>
