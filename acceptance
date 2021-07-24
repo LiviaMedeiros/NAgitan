@@ -6,115 +6,93 @@
 <link rel="icon" href="/favicon.ico" />
 <meta property="og:title" content="NAgitan" />
 <meta property="og:image" content="/magireco/NAgitan/img/Oh.png" />
-<meta property="og:description" content="denial" />
+<meta property="og:description" content="acceptance" />
 <meta property="og:image:width" content="300" />
 <meta property="og:image:height" content="150" />
 <meta charset="utf-8" />
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
 <script src="/magireco/NAgitan/js/jszip.min.js" integrity="sha512-y3o0Z5TJF1UsKjs/jS2CDkeHN538bWsftxO9nctODL5W40nyXIbs0Pgyu7//icrQY9m6475gLaVr39i/uh/nLA=="></script>
 <script>
 function play_happy_sound() {
-	const mumi_why = document.getElementById("mumiwhy").classList;
-	if (mumi_why.contains("rikahappy"))
-		return false;
-	mumi_why.add("rikahappy");
+	const mumi_why = document.getElementById("mumiwhy").classList;if (
+	      mumi_why.contains("rikahappy")) return false;
+	      mumi_why.add("rikahappy");
 	const rika_happy_laugh = new Audio('/magireco/NAgitan/sound/rika_happy_laugh.mp3');
-	rika_happy_laugh.play();
-	rika_happy_laugh.addEventListener("ended", function() {
-		return mumi_why.remove("rikahappy");
-	});
+	      rika_happy_laugh.play();
+	      rika_happy_laugh.addEventListener("ended", () => mumi_why.remove("rikahappy"));
 	return true;
 }
-$(function() {
+$(() => {
 	const nagi = {
 		"userdata": {
 			"user":{},
 			"gameUser":{},
 			"userCharaList":[],
-			"userPieceList":[],
+			"userCardList":[],
 			"userFollowList":[]
 		},
-		"log": function(txt, cls = null) {
+		"gallery":{"data":{}},
+		"log": (txt, cls = null) => {
 			$('<div />').text(Date.now()+' | '+JSON.stringify(txt)).addClass(cls == null ? 'regular' : cls).appendTo($('#log'));
 			console.log(txt);
 			return false;
 		},
-		"progress_on": function() {
-			return $('body').addClass("connecting");
-		},
-		"progress_off": function(e = null) {
+		"progress_on": () => $('body').addClass("connecting"),
+		"progress_off": (e = null) => {
 			$('body').removeClass("connecting");
-			return e == null ? true : typeof this.log === "function" ? this.log(e, 'red') : false;
+			return e == null ? true : nagi.log(e, 'red');
 		},
-		"success_on": function() {
-			return $('body').addClass("success");
-		},
-		"drag_soul": function() {
-			return {
-				"dragenter": this.progress_on,
-				"dragleave": this.progress_off
-			};
-		},
+		"success_on": () => $('body').addClass("success"),
+		"drag_soul": () => ({
+			"dragenter": this.progress_on,
+			"dragleave": this.progress_off
+		}),
 		"drop_soul": {
-			"change": function(e) {
+			"change": soul => {
 				nagi.log("got file");
 				nagi.progress_on();
-				return nagi.handle_file(e.target.files[0], nagi.show_data);
+				return nagi.handle_file(soul.target.files[0], nagi.show_data);
 			}
 		},
 		"throw_soul": {
-			"dblclick": function() {
-				return nagi.log("do not throw souls!", 'blue');
-			}
+			"click": soul => alert(JSON.stringify(nagi.gallery))
 		},
-		"handle_file": function(file, callback) {
-			return file == undefined ? nagi.progress_off("bad file") : JSZip.loadAsync(file).then(zip => {
-				Promise.all(Object.keys(nagi.userdata).map(function(f) {
+		"handle_file": (file, callback) =>
+			file == undefined ? nagi.progress_off("bad file") : JSZip.loadAsync(file).then(zip => {
+				Promise.all(Object.keys(nagi.userdata).map(f => {
 					if ((zipfile = zip.file("user/"+f+".json")) == null)
 						return nagi.progress_off("file not found: "+f);
 					nagi.log("extracting "+f);
 					return zipfile.async("string");
-				})).then(d => { return callback(d); });
-			}, function (e) {
-				return nagi.progress_off("error reading "+file.name+" as zip");
-			});
-		},
-		"show_data": function(d) {
-			if (!Object.keys(nagi.userdata).every(function(f, n) {
-				if (!d[n])
-					return nagi.progress_off(f+" not found, aborting");
-				nagi.log("parsing "+f);
+				})).then(callback);
+			}, e => nagi.progress_off("error reading "+file.name+" as zip")),
+		"show_data": d => {
+			if (!Object.keys(nagi.userdata).every((f, n) => {
 				try {
+					if (!d[n])
+						return nagi.progress_off(f+" not found, aborting");
+					nagi.log("parsing "+f);
 					nagi.userdata[f] = JSON.parse(d[n]);
+					return true;
 				} catch(e) {
 					return nagi.progress_off("error parsing "+f+" as json");
 				}
 				return true;
-			}))
-				return false;
+			})) return false;
 			nagi.log("exhuming M-girls", 'blue');
-			for (const key of ['country', 'createdAt', 'loginName'])
-				$('#user_'+key+' > .v').text(nagi.userdata.user[key]);
-			for (const key of ['inviteCode', 'level', 'comment'])
-				$('#gameuser_'+key+' > .v').text(nagi.userdata.gameUser[key]);
-			nagi.userdata.userCharaList.forEach(function(item) {
-				return $('<div />').addClass("mgirl").attr({"data-mgirl-id":item.chara.id}).addClass("bonds-"+item.bondsTotalPt).on("click", function() {
-					return alert(item.chara.charaMessageList[Math.floor(Math.random()*item.chara.charaMessageList.length)].message.replace('<br>', '\n'));
-				}).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.chara.defaultCardId+".png",alt:item.chara.name,title:item.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi', 'Oh?')})).appendTo($('#mgirls'));
-			});
-			nagi.userdata.userFollowList.forEach(function(item) {
-				return $('<div />').addClass('follow').addClass((item.follower ? "is" : "not")+"_follower").addClass((item.follow ? "is" : "not")+"_following").on("click", function() {
-					return alert(item.comment);
-				}).append($('<span />').addClass("follow_name").text(item.userName)).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.displayCardId+".png",alt:item.charaName,title:item.charaName})).append($('<span />').addClass("follow_date").text(item.createdAt)).append($('<span />').addClass("follow_qbcode").text(item.inviteCode)).appendTo($('#follows'));
-			});
+			['country', 'createdAt', 'loginName'].forEach(key => $('#user_'+key+' > .v').text(nagi.userdata.user[key]));
+			['inviteCode', 'level', 'comment'].forEach(key => $('#gameuser_'+key+' > .v').text(nagi.userdata.gameUser[key]));
+			nagi.userdata.userCharaList .forEach(item=>$('<div />').addClass("mgirl").attr({"data-mgirl-id":item.chara.id}).addClass("bonds-"+item.bondsTotalPt).on("click",()=>alert(item.chara.charaMessageList[Math.floor(Math.random()*item.chara.charaMessageList.length)].message.replace('<br>','\n'))).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.chara.defaultCardId+".png",alt:item.chara.name,title:item.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})).appendTo($('#mgirls')));
+			nagi.userdata.userFollowList.forEach(item=>$('<div />').addClass('follow').addClass((item.follower?"is":"not")+"_follower").addClass((item.follow?"is":"not")+"_following").on("click",()=>alert(item.comment)).append($('<span />').addClass("follow_name").text(item.userName)).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.displayCardId+".png",alt:item.charaName,title:item.charaName})).append($('<span />').addClass("follow_date").text(item.createdAt)).append($('<span />').addClass("follow_qbcode").text(item.inviteCode)).appendTo($('#follows')));
+			nagi.userdata.userCardList  .forEach(item=>nagi.gallery.data[item.card.charaNo.toString()]=[item.card.cardId.toString()].concat(nagi.gallery.data[item.card.charaNo.toString()]||[]));
 			nagi.success_on();
 			return nagi.progress_off();
 		}
 	};
 
-	return $('#nagi_form').on(nagi.drag_soul()).find("#nagi_soul")
-	                      .on(nagi.drop_soul)
-	                      .on(nagi.throw_soul);
+	$('#nagi_form').on(nagi.drag_soul()).find("#nagi_soul")
+	               .on(nagi.drop_soul);return $('#mumiwhy')
+	               .on(nagi.throw_soul);
 });
 </script>
 <style>
@@ -125,10 +103,11 @@ body {background:#eee;color:#000;font-size:14px;font-family:Koruri,Sans-Serif}
 a {color:inherit;text-decoration:inherit}
 #wrapper {display:flex;justify-content:center;align-items:center;height:400px}
 #connecting {position:fixed;right:0;bottom:0;width:334px;height:54px;background:url("/magireco/NAgitan/img/connecting.png");opacity:0;transition:opacity 0.4s}
-#mumiwhy {position:fixed;right:0;bottom:0;width:128px;height:128px;background:url("/magireco/NAgitan/img/mumiwhy.png");opacity:0;transition:opacity 8s}
+#mumiwhy {position:fixed;right:0;bottom:0;width:128px;height:128px;cursor:not-allowed;background:url("/magireco/NAgitan/img/mumiwhy.png");opacity:0;transition:opacity 8s}
 #mumiwhy.rikahappy {opacity:1}
+.success #mumiwhy {cursor:copy}
 .connecting #connecting {opacity:1}
-#log {position:absolute;top:0;left:0;color:#ddd;font-size:10px;opacity:0.1;z-index:1}
+#log {position:absolute;top:0;left:0;color:#ddd;font-size:10px;opacity:0.1;z-index:1;cursor:vertical-text}
 #log:hover {opacity:1}
 #log > .regular {transform:scaleY(-1)}
 #log > .red {color:red}
@@ -137,25 +116,26 @@ a {color:inherit;text-decoration:inherit}
 #nagi_form > div, #nagi_form > label {display:block;width:220px;height:56px;box-sizing:border-box;margin:4px 0;padding:0 4px;line-height:56px;border-radius:16px;font-size:24px}
 #nagi_form > input:focus {outline:none}
 #nagi_soul {cursor:pointer;position:absolute;opacity:0;top:0;right:0;bottom:0;left:0}
-#nagi_label {text-align:center;color:#000;background:url("/magireco/NAgitan/img/btn_bg00.png");text-shadow:0 0 4px #800;border:none;outline:none;transition:color 1s;transition:text-shadow 1s;cursor:pointer}
-#nagi_label:hover {color:#f00;text-shadow:0 0 4px #f00}
+#nagi_label {text-align:center;color:#000;background:url("/magireco/NAgitan/img/btn_bg00.png");text-shadow:0 0 4px #800;border:none;outline:none;filter:grayscale(0.5);transition:color 5s, text-shadow 1s, filter 1s;cursor:alias}
+#nagi_label:hover {color:#f00;text-shadow:0 0 4px #f00;filter:grayscale(0)}
+#nagi_label:active {font-family:Meguca}
 .connecting #nagi_label {font-family:Meguca;color:#800}
 .success #wrapper {opacity:0;display:none}
 #acceptance {opacity:0;transition:opacity 1s;display:block;margin:0 auto;justify-content:center;align-items:center;max-width:475px;height:0}
 .success #acceptance {opacity:1;height:auto}
 #userinfo > div {height:20px;line-height:20px;overflow:hidden}
-#userinfo > #gameuser_inviteCode > .v {font-family:Meguca}
+#userinfo > #gameuser_inviteCode > .v {font-family:Meguca;cursor:zoom-in}
 #userinfo .h {display:inline-block;width:160px;text-align:right;margin-right:4px}
 #userinfo .h::after {content:": "}
 #mgirls {border-bottom:dashed 1px #000;border-top:dashed 1px #000;padding:4px 0;margin:4px 0}
-#mgirls > .mgirl {display:inline-block;vertical-align:top;height:25px;box-shadow:0 0 4px 4px rgba(128, 96, 96, 0.2) inset}
+#mgirls > .mgirl {display:inline-block;cursor:cell;vertical-align:top;height:25px;box-shadow:0 0 4px 4px rgba(128, 96, 96, 0.2) inset}
 #mgirls > .mgirl > img {opacity:0.6;transition:opacity 1s;width:25px;height:25px}
 #mgirls > .mgirl.bonds-0 {box-shadow:0 0 4px 4px rgba(0, 0, 0, 0.2) inset}
 #mgirls > .mgirl.bonds-0 > img {opacity:0.2}
 #mgirls > .mgirl.bonds-64000 {box-shadow:0 0 4px 4px rgba(255, 192, 192, 0.2) inset}
 #mgirls > .mgirl.bonds-64000 > img {opacity:1}
 #mgirls > .mgirl:hover > img {opacity:1}
-#follows > .follow {height:20px;line-height:20px;vertical-align:top;outline:dotted 1px #e8e8e8;cursor:pointer}
+#follows > .follow {height:20px;line-height:20px;vertical-align:top;cursor:help;outline:dotted 1px #e8e8e8}
 #follows > .follow:hover {background:rgba(0.5, 0.5, 0.5, 0.1)}
 #follows > .follow > span {vertical-align:top;overflow:hidden}
 #follows > .follow > .follow_name {display:inline-block;width:160px;text-align:right;margin-right:4px}
