@@ -12,7 +12,9 @@
 <meta charset="utf-8" />
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
 <script src="/magireco/NAgitan/js/jszip.min.js" integrity="sha512-y3o0Z5TJF1UsKjs/jS2CDkeHN538bWsftxO9nctODL5W40nyXIbs0Pgyu7//icrQY9m6475gLaVr39i/uh/nLA=="></script>
-<script>
+<link rel="stylesheet" href="https://magica-us.com/qb/step.css" integrity="sha512-kyTL+K/vwFmPtZvzEwCUfmYwc6IUMtwtbumtgBHJIvyLbL1rh2me6aP3tsCn5XJ0HX1fdO9A2ZCM8ryjzd+Eyw==" crossorigin="anonymous" />
+<script src="https://magica-us.com/qb/step.js" integrity="sha512-ymdmNDkldCbTWBdqyYYYewEFeorzLyn1VYl98toz8mkYQs2shTP7IkjjEtfaTJCMQMMS0k2b0k9n4dtSI9i8Ag==" crossorigin="anonymous"></script>
+<script>"use strict";
 function play_happy_sound() {
 	const mumi_why = document.getElementById("mumiwhy").classList;if (
 	      mumi_why.contains("rikahappy")) return false;
@@ -32,27 +34,16 @@ $(() => {
 			"userFollowList":[]
 		},
 		"gallery":{"data":{}},
-		"log": (txt, cls = null) => {
-			$('<div />').text(Date.now()+' | '+JSON.stringify(txt)).addClass(cls == null ? 'regular' : cls).appendTo($('#log'));
-			console.log(txt);
-			return false;
-		},
+		"log": (txt, cls = null) => ($('<div />').text(Date.now()+' | '+JSON.stringify(txt)).addClass(cls ?? 'regular').appendTo($('#log')), console.log(txt), false),
 		"progress_on": () => $('body').addClass("connecting"),
-		"progress_off": (e = null) => {
-			$('body').removeClass("connecting");
-			return e == null ? true : nagi.log(e, 'red');
-		},
+		"progress_off": (e = null) => ($('body').removeClass("connecting"), e == null ? true : nagi.log(e, 'red')),
 		"success_on": () => $('body').addClass("success"),
 		"drag_soul": () => ({
 			"dragenter": this.progress_on,
 			"dragleave": this.progress_off
 		}),
 		"drop_soul": {
-			"change": soul => {
-				nagi.log("got file");
-				nagi.progress_on();
-				return nagi.handle_file(soul.target.files[0], nagi.show_data);
-			}
+			"change": soul => (nagi.log("got file"), nagi.progress_on(), nagi.handle_file(soul.target.files[0], nagi.show_data))
 		},
 		"throw_soul": {
 			"click": soul => alert(JSON.stringify(nagi.gallery))
@@ -60,25 +51,18 @@ $(() => {
 		"handle_file": (file, callback) =>
 			file == undefined ? nagi.progress_off("bad file") : JSZip.loadAsync(file).then(zip => {
 				Promise.all(Object.keys(nagi.userdata).map(f => {
-					if ((zipfile = zip.file("user/"+f+".json")) == null)
-						return nagi.progress_off("file not found: "+f);
-					nagi.log("extracting "+f);
-					return zipfile.async("string");
+					const zipfile = zip.file("user/"+f+".json");
+					return zipfile == null ? nagi.progress_off("file not found: "+f) : (nagi.log("extracting "+f), zipfile.async("string"));
 				})).then(callback);
 			}, e => nagi.progress_off("error reading "+file.name+" as zip")),
 		"show_data": d => {
 			if (!Object.keys(nagi.userdata).every((f, n) => {
 				try {
-					if (!d[n])
-						return nagi.progress_off(f+" not found, aborting");
-					nagi.log("parsing "+f);
-					nagi.userdata[f] = JSON.parse(d[n]);
-					return true;
+					return d[n] ? (nagi.log("parsing "+f), nagi.userdata[f] = JSON.parse(d[n])) : nagi.progress_off(f+" is mandatory");
 				} catch(e) {
 					return nagi.progress_off("error parsing "+f+" as json");
 				}
-				return true;
-			})) return false;
+			})) return nagi.progress_off("bad data, aborting");
 			nagi.log("exhuming M-girls", 'blue');
 			['country', 'createdAt', 'loginName'].forEach(key => $('#user_'+key+' > .v').text(nagi.userdata.user[key]));
 			['inviteCode', 'level', 'comment'].forEach(key => $('#gameuser_'+key+' > .v').text(nagi.userdata.gameUser[key]));
