@@ -86,7 +86,7 @@ body {background:#eee;color:#000;font-size:14px;font-family:Koruri,Sans-Serif}
 ::selection {background:transparent}
 a {color:inherit;text-decoration:inherit}
 #wrapper {display:flex;justify-content:center;align-items:center;height:400px}
-#connecting {position:fixed;right:0;bottom:0;width:334px;height:54px;background:url("/magireco/NAgitan/img/connecting.png");opacity:0;transition:opacity 0.4s}
+#connecting {position:fixed;right:0;bottom:20px;width:334px;height:54px;background:url("/magireco/NAgitan/img/connecting.png") left top no-repeat;opacity:0;transition:opacity 0.4s}
 #mumiwhy {position:fixed;right:0;bottom:0;width:128px;height:128px;cursor:not-allowed;background:url("/magireco/NAgitan/img/mumiwhy.png");opacity:0;transition:opacity 8s}
 #mumiwhy.rikahappy {opacity:1}
 .success #mumiwhy {cursor:copy}
