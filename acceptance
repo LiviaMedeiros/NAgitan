@@ -43,34 +43,29 @@ $(() => {
 			"dragleave": this.progress_off
 		}),
 		"drop_soul": {
-			"change": soul => (nagi.log("got file"), nagi.progress_on(), nagi.handle_file(soul.target.files[0], nagi.show_data))
+			"change": soul => (nagi.log("got file"), nagi.progress_on(), soul.target.files[0] == undefined ? nagi.progress_off("bad file") : JSZip.loadAsync(soul.target.files[0]).then(zip => Promise.all(Object.keys(nagi.userdata).map(f => {
+				const zipfile = zip.file("user/"+f+".json");
+				return zipfile == null ? nagi.progress_off("file not found: "+f) : (nagi.log("extracting "+f), zipfile.async("string"));
+			})).then(d => {
+				if (!Object.keys(nagi.userdata).every((f, n) => {
+					try {
+						return d[n] ? (nagi.log("parsing "+f), nagi.userdata[f] = JSON.parse(d[n])) : nagi.progress_off(f+" is mandatory");
+					} catch(e) {
+						return nagi.progress_off("error parsing "+f+" as json");
+					}
+				})) return nagi.progress_off("bad data, aborting");
+				nagi.log("exhuming M-girls", 'blue');
+				['country', 'createdAt', 'loginName'].forEach(key => $('#user_'+key+' > .v').text(nagi.userdata.user[key]));
+				['inviteCode', 'level', 'comment'].forEach(key => $('#gameuser_'+key+' > .v').text(nagi.userdata.gameUser[key]));
+				nagi.userdata.userCharaList .forEach(item=>$('<div />').addClass("mgirl").attr({"data-mgirl-id":item.chara.id}).addClass("bonds-"+item.bondsTotalPt).on("click",()=>alert(item.chara.charaMessageList[Math.floor(Math.random()*item.chara.charaMessageList.length)].message.replace('<br>','\n'))).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.chara.defaultCardId+".png",alt:item.chara.name,title:item.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})).appendTo($('#mgirls')));
+				nagi.userdata.userFollowList.forEach(item=>$('<div />').addClass('follow').addClass((item.follower?"is":"not")+"_follower").addClass((item.follow?"is":"not")+"_following").on("click",()=>alert(item.comment)).append($('<span />').addClass("follow_name").text(item.userName)).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.displayCardId+".png",alt:item.charaName,title:item.charaName})).append($('<span />').addClass("follow_date").text(item.createdAt)).append($('<span />').addClass("follow_qbcode").text(item.inviteCode)).appendTo($('#follows')));
+				nagi.userdata.userCardList  .forEach(item=>nagi.gallery.data[item.card.charaNo.toString()]=[item.card.cardId.toString()].concat(nagi.gallery.data[item.card.charaNo.toString()]||[]));
+				nagi.success_on();
+				return nagi.progress_off();
+			}), e => nagi.progress_off("error reading "+soul.target.files[0].name+" as zip")))
 		},
 		"throw_soul": {
 			"click": soul => alert(JSON.stringify(nagi.gallery))
-		},
-		"handle_file": (file, callback) =>
-			file == undefined ? nagi.progress_off("bad file") : JSZip.loadAsync(file).then(zip => {
-				Promise.all(Object.keys(nagi.userdata).map(f => {
-					const zipfile = zip.file("user/"+f+".json");
-					return zipfile == null ? nagi.progress_off("file not found: "+f) : (nagi.log("extracting "+f), zipfile.async("string"));
-				})).then(callback);
-			}, e => nagi.progress_off("error reading "+file.name+" as zip")),
-		"show_data": d => {
-			if (!Object.keys(nagi.userdata).every((f, n) => {
-				try {
-					return d[n] ? (nagi.log("parsing "+f), nagi.userdata[f] = JSON.parse(d[n])) : nagi.progress_off(f+" is mandatory");
-				} catch(e) {
-					return nagi.progress_off("error parsing "+f+" as json");
-				}
-			})) return nagi.progress_off("bad data, aborting");
-			nagi.log("exhuming M-girls", 'blue');
-			['country', 'createdAt', 'loginName'].forEach(key => $('#user_'+key+' > .v').text(nagi.userdata.user[key]));
-			['inviteCode', 'level', 'comment'].forEach(key => $('#gameuser_'+key+' > .v').text(nagi.userdata.gameUser[key]));
-			nagi.userdata.userCharaList .forEach(item=>$('<div />').addClass("mgirl").attr({"data-mgirl-id":item.chara.id}).addClass("bonds-"+item.bondsTotalPt).on("click",()=>alert(item.chara.charaMessageList[Math.floor(Math.random()*item.chara.charaMessageList.length)].message.replace('<br>','\n'))).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.chara.defaultCardId+".png",alt:item.chara.name,title:item.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})).appendTo($('#mgirls')));
-			nagi.userdata.userFollowList.forEach(item=>$('<div />').addClass('follow').addClass((item.follower?"is":"not")+"_follower").addClass((item.follow?"is":"not")+"_following").on("click",()=>alert(item.comment)).append($('<span />').addClass("follow_name").text(item.userName)).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.displayCardId+".png",alt:item.charaName,title:item.charaName})).append($('<span />').addClass("follow_date").text(item.createdAt)).append($('<span />').addClass("follow_qbcode").text(item.inviteCode)).appendTo($('#follows')));
-			nagi.userdata.userCardList  .forEach(item=>nagi.gallery.data[item.card.charaNo.toString()]=[item.card.cardId.toString()].concat(nagi.gallery.data[item.card.charaNo.toString()]||[]));
-			nagi.success_on();
-			return nagi.progress_off();
 		}
 	};
 
@@ -99,9 +94,9 @@ a {color:inherit;text-decoration:inherit}
 #nagi_form {position:relative;z-index:50}
 #nagi_form > div, #nagi_form > label {display:block;width:220px;height:56px;box-sizing:border-box;margin:4px 0;padding:0 4px;line-height:56px;border-radius:16px;font-size:24px}
 #nagi_form > input:focus {outline:none}
-#nagi_soul {cursor:pointer;position:absolute;opacity:0;top:0;right:0;bottom:0;left:0}
-#nagi_label {text-align:center;color:#000;background:url("/magireco/NAgitan/img/btn_bg00.png");text-shadow:0 0 4px #800;border:none;outline:none;filter:grayscale(0.5);transition:color 5s, text-shadow 1s, filter 1s;cursor:alias}
-#nagi_label:hover {color:#f00;text-shadow:0 0 4px #f00;filter:grayscale(0)}
+#nagi_soul {cursor:alias;position:absolute;opacity:0;top:0;right:0;bottom:0;left:0}
+#nagi_label {text-align:center;color:#000;background:url("/magireco/NAgitan/img/btn_bg00.png");text-shadow:0 0 4px #800;border:none;outline:none;transition:color 5s, text-shadow 1s}
+#nagi_label:hover {color:#f00;text-shadow:0 0 4px #f00}
 #nagi_label:active {font-family:Meguca}
 .connecting #nagi_label {font-family:Meguca;color:#800}
 .success #wrapper {opacity:0;display:none}
@@ -134,10 +129,7 @@ a {color:inherit;text-decoration:inherit}
 <body>
 	<div id="all">
 		<div id="wrapper">
-			<form id="nagi_form">
-				<input type="file" id="nagi_soul" name="nagi_soul" /><br />
-				<label id="nagi_label" for="nagi_soul">user.zip</label>
-			</form>
+			<form id="nagi_form"><input type="file" id="nagi_soul" name="nagi_soul" /><label id="nagi_label" for="nagi_soul">user.zip</label></form>
 		</div>
 		<div id="acceptance">
 			<div id="userinfo"><div id="user_loginName"><span class="h">name</span><span class="v"></span></div><div id="user_country"><span class="h">country</span><span class="v"></span></div><div id="user_createdAt"><span class="h">contracted</span><span class="v"></span></div><div id="gameuser_inviteCode"><span class="h">QBcode</span><a onclick="play_happy_sound()" class="v"></a></div><div id="gameuser_level"><span class="h">level</span><span class="v"></span></div><div id="gameuser_comment"><span class="h">text</span><span class="v"></span></div></div>
