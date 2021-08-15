@@ -11,7 +11,7 @@
 <meta property="og:image:height" content="150" />
 <meta charset="utf-8" />
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
-<script src="/magireco/NAgitan/js/jszip.min.js" integrity="sha512-y3o0Z5TJF1UsKjs/jS2CDkeHN538bWsftxO9nctODL5W40nyXIbs0Pgyu7//icrQY9m6475gLaVr39i/uh/nLA=="></script>
+<script src="/magireco/NAgitan/js/jszip.min.js" integrity="sha512-xQBQYt9UcgblF6aCMrwU1NkVA7HCXaSN2oq0so80KO+y68M+n64FOcqgav4igHe6D5ObBLIf68DWv+gfBowczg=="></script>
 <link rel="stylesheet" href="https://magica-us.com/qb/step.css" integrity="sha512-kyTL+K/vwFmPtZvzEwCUfmYwc6IUMtwtbumtgBHJIvyLbL1rh2me6aP3tsCn5XJ0HX1fdO9A2ZCM8ryjzd+Eyw==" crossorigin="anonymous" />
 <script src="https://magica-us.com/qb/step.js" integrity="sha512-OSeoWV6N9DhfZ7hXVXHENrxJUjFz5ZXB72O+/gT5howtU4e/QQrzs88+W7rmSfQTzFcz4E90JBCwwlZkkuK0CQ==" crossorigin="anonymous"></script>
 <script>"use strict";
