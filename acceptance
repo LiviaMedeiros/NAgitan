@@ -24,46 +24,43 @@ function play_happy_sound() {
 	      rika_happy_laugh.addEventListener("ended", () => mumi_why.remove("rikahappy"));
 	return true;
 }
-$(() => {
-	const nagi = {
-		userdata: {
-			user:{},
-			gameUser:{},
-			userCharaList:[],
-			userCardList:[],
-			userFollowList:[]
-		},
-		gallery: {"data":{}},
-		log: (txt, cls = null) => ($('<div />').text(Date.now()+' | '+JSON.stringify(txt)).addClass(cls || "regular").appendTo($('#log')), console.log(txt), false),
-		progress_on: () => $('body').addClass("connecting"),
-		progress_off: (e = null) => ($('body').removeClass("connecting"), e == null || nagi.log(e, 'red')),
-		success_on: () => ($('body').addClass("success"), null),
-		drag_soul: () => ({
-			dragenter: this.progress_on,
-			dragleave: this.progress_off
-		}),
-		drop_soul: {
-			change: soul => (nagi.log("got file"), nagi.progress_on(), soul.target.files[0] == null ? nagi.progress_off("bad file") : JSZip.loadAsync(soul.target.files[0]).then(zip => Promise.all(Object.keys(nagi.userdata).map(f => {
-				const zipfile = zip.file("user/"+f+".json");
-				return zipfile == null ? nagi.progress_off("file not found: "+f) : (nagi.log("extracting "+f), zipfile.async("string"));
-			})).then(d => nagi.progress_off(Object.keys(nagi.userdata).every((f, n) => d[n] ? (nagi.log("parsing "+f), nagi.userdata[f] = JSON.parse(d[n])) : nagi.progress_off(f+" is mandatory")) ? (nagi.log("exhuming M-girls", 'blue'),
-				['country', 'createdAt', 'loginName'].forEach(key => $('#user_'+key+' > .v').text(nagi.userdata.user[key])),
-				['inviteCode', 'level', 'comment'].forEach(key => $('#gameuser_'+key+' > .v').text(nagi.userdata.gameUser[key])),
-				nagi.userdata.userCharaList .forEach(item=>$('<div />').addClass("mgirl bonds-"+item.bondsTotalPt).attr({"data-mgirl-id":item.chara.id}).on("click",()=>alert(item.chara.charaMessageList[Math.floor(Math.random()*item.chara.charaMessageList.length)].message.replace('<br>','\n'))).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.chara.defaultCardId+".png",alt:item.chara.name,title:item.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})).appendTo($('#mgirls'))),
-				nagi.userdata.userFollowList.forEach(item=>$('<div />').addClass("follow "+(item.follower?"is":"not")+"_follower "+(item.follow?"is":"not")+"_following").on("click",()=>alert(item.comment)).append($('<span />').addClass("follow_name").text(item.userName)).append($('<img />').attr({src:"/magireco/NAgitan/img/chara/"+item.displayCardId+".png",alt:item.charaName,title:item.charaName})).append($('<span />').addClass("follow_date").text(item.createdAt)).append($('<span />').addClass("follow_qbcode").text(item.inviteCode)).appendTo($('#follows'))),
-				nagi.userdata.userCardList  .forEach(item=>nagi.gallery.data[item.card.charaNo.toString()]=[item.card.cardId.toString()].concat(nagi.gallery.data[item.card.charaNo.toString()]||[])),
-				nagi.success_on()) : "bad data, aborting")), e => nagi.progress_off("error reading "+soul.target.files[0].name+" as zip")
-			).catch(soul => nagi.progress_off(soul.name == "SyntaxError" ? "error parsing file as json": "do not throw souls")))
-		},
-		throw_soul: {
-			click: soul => alert(JSON.stringify(nagi.gallery))
-		}
-	};
-
-	$('#nagi_form').on(nagi.drag_soul()).find("#nagi_soul")
-	               .on(nagi.drop_soul);return $('#mumiwhy')
-	               .on(nagi.throw_soul);
-});
+const _ = {
+	userdata: {
+		user:{},
+		gameUser:{},
+		userCharaList:[],
+		userCardList:[],
+		userFollowList:[]
+	},
+	gallery: {"data":{}},
+	log: (txt, lvl = 'info') => ($('<div />',{"class":lvl}).text(Date.now()+' | '+JSON.stringify(txt)).appendTo('#log'), console[lvl](txt), false),
+	progress: (e = null, a = false) => ($('body')[(a ? 'add' : 'remove')+'Class']("connecting"), e == null || _.log(e, a ? 'warn' : 'error')),
+	success: () => ($('body').addClass("success"), null),
+	drag_soul: {
+		dragenter: () => _.progress(null, true),
+		dragleave: () => _.progress()
+	},
+	drop_soul: {
+		change: soul => (_.progress("got file", true), soul.target.files[0] == null ? _.progress("bad file") : JSZip.loadAsync(soul.target.files[0])
+		.then(zip => Promise.all(Object.keys(_.userdata).map(f => ({name:f,file:zip.file("user/"+f+".json")})).map(f => f.file == null ? _.progress("file not found: "+f.name) : (_.log("extracting "+f.name), f.file.async("string"))))
+		.then(d => _.progress(Object.keys(_.userdata).every((f, n) => d[n] ? (_.log("parsing "+f), _.userdata[f] = JSON.parse(d[n])) : _.progress(f+" is mandatory")) ? (_.log("exhuming M-girls", 'warn'),
+			['country', 'createdAt', 'loginName'].forEach(ㅇ => $('#user_'+ㅇ+' > .v').text(_.userdata.user[ㅇ])),
+			['inviteCode', 'level', 'comment'].forEach(ㅇ => $('#gameuser_'+ㅇ+' > .v').text(_.userdata.gameUser[ㅇ])),
+			_.userdata.userCharaList .forEach(ㅇ => $('<div />',{"class":"mgirl bonds-"+ㅇ.bondsTotalPt,"data-mgirl-id":ㅇ.chara.id}).on("click",()=>alert(ㅇ.chara.charaMessageList[Math.floor(Math.random()*ㅇ.chara.charaMessageList.length)].message.replace('<br>','\n'))).append($('<img />',{src:"/magireco/NAgitan/img/chara/"+ㅇ.chara.defaultCardId+".png",alt:ㅇ.chara.name,title:ㅇ.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})).appendTo('#mgirls')),
+			_.userdata.userFollowList.forEach(ㅇ => $('<div />',{"class":"follow "+(ㅇ.follower?"is":"not")+"_follower "+(ㅇ.follow?"is":"not")+"_following"}).on("click",()=>alert(ㅇ.comment)).append($('<span />',{"class":"follow_name"}).text(ㅇ.userName),$('<img />',{src:"/magireco/NAgitan/img/chara/"+ㅇ.displayCardId+".png",alt:ㅇ.charaName,title:ㅇ.charaName}),$('<span />',{"class":"follow_date"}).text(ㅇ.createdAt),$('<span />',{"class":"follow_qbcode"}).text(ㅇ.inviteCode)).appendTo('#follows')),
+			_.userdata.userCardList  .forEach(ㅇ => _.gallery.data[ㅇ.card.charaNo.toString()]=[ㅇ.card.cardId.toString()].concat(_.gallery.data[ㅇ.card.charaNo.toString()]||[])),
+			_.success()) : "bad data, aborting")), e => _.progress("error reading "+soul.target.files[0].name+" as zip"))
+		.catch(soul => _.progress(soul.name == "SyntaxError" ? "error parsing file as json": "do not throw souls")))
+	},
+	throw_soul: {
+		click: soul => alert(JSON.stringify(_.gallery))
+	}
+};
+$(() => (
+	  $('#nagi_soul').on(_.drag_soul).
+	find('#nagi_gem').on(_.drop_soul),
+	    $('#mumiwhy').on(_.throw_soul)
+));
 </script>
 <style>
 @font-face {font-family:Meguca;src:url("/magireco/data/static/font.ttf")}
@@ -79,13 +76,13 @@ a {color:inherit;text-decoration:inherit}
 .connecting #connecting {opacity:1}
 #log {position:absolute;top:0;left:0;color:#ddd;font-size:10px;opacity:0.1;z-index:1;cursor:vertical-text}
 #log:hover {opacity:1}
-#log > .regular {transform:scaleY(-1)}
-#log > .red {color:red}
-#log > .blue {color:blue}
-#nagi_form {position:relative;z-index:50}
-#nagi_form > div, #nagi_form > label {display:block;width:220px;height:56px;box-sizing:border-box;margin:4px 0;padding:0 4px;line-height:56px;border-radius:16px;font-size:24px}
-#nagi_form > input:focus {outline:none}
-#nagi_soul {cursor:alias;position:absolute;opacity:0;top:0;right:0;bottom:0;left:0}
+#log > .info {transform:scaleY(-1)}
+#log > .warn {color:blue}
+#log > .error {color:red}
+#nagi_soul {position:relative;z-index:50}
+#nagi_soul > div, #nagi_soul > label {display:block;width:220px;height:56px;box-sizing:border-box;margin:4px 0;padding:0 4px;line-height:56px;border-radius:16px;font-size:24px}
+#nagi_soul > input:focus {outline:none}
+#nagi_gem {cursor:alias;position:absolute;opacity:0;top:0;right:0;bottom:0;left:0}
 #nagi_label {text-align:center;color:#000;background:url("/magireco/NAgitan/img/btn_bg00.png");text-shadow:0 0 4px #800;border:none;outline:none;transition:color 5s, text-shadow 1s}
 #nagi_label:hover {color:#f00;text-shadow:0 0 4px #f00}
 #nagi_label:active {font-family:Meguca}
@@ -105,8 +102,8 @@ a {color:inherit;text-decoration:inherit}
 #mgirls > .mgirl.bonds-64000 {box-shadow:0 0 4px 4px rgba(255, 192, 192, 0.2) inset}
 #mgirls > .mgirl.bonds-64000 > img {opacity:1}
 #mgirls > .mgirl:hover > img {opacity:1}
-#follows > .follow {height:20px;line-height:20px;vertical-align:top;cursor:help;outline:dotted 1px #e8e8e8}
-#follows > .follow:hover {background:rgba(0.5, 0.5, 0.5, 0.1)}
+#follows > .follow {height:20px;line-height:20px;vertical-align:top;cursor:help;filter:grayscale(.6)}
+#follows > .follow:hover {filter:grayscale(0);background:rgba(0.5, 0.5, 0.5, 0.1)}
 #follows > .follow > span {vertical-align:top;overflow:hidden}
 #follows > .follow > .follow_name {display:inline-block;width:160px;text-align:right;margin-right:4px}
 #follows > .follow > img {width:20px;height:20px;transform:scaleX(-1)}
@@ -120,7 +117,7 @@ a {color:inherit;text-decoration:inherit}
 <body>
 	<div id="all">
 		<div id="wrapper">
-			<form id="nagi_form"><input type="file" id="nagi_soul" name="nagi_soul" /><label id="nagi_label" for="nagi_soul">user.zip</label></form>
+			<form id="nagi_soul"><input type="file" id="nagi_gem" name="nagi_gem" /><label id="nagi_label" for="nagi_gem">user.zip</label></form>
 		</div>
 		<div id="acceptance">
 			<div id="userinfo"><div id="user_loginName"><span class="h">name</span><span class="v"></span></div><div id="user_country"><span class="h">country</span><span class="v"></span></div><div id="user_createdAt"><span class="h">contracted</span><span class="v"></span></div><div id="gameuser_inviteCode"><span class="h">QBcode</span><a onclick="play_happy_sound()" class="v"></a></div><div id="gameuser_level"><span class="h">level</span><span class="v"></span></div><div id="gameuser_comment"><span class="h">text</span><span class="v"></span></div></div>
@@ -130,7 +127,7 @@ a {color:inherit;text-decoration:inherit}
 		</div>
 	</div>
 	<div id="connecting"></div>
-	<div id="mumiwhy"></div>
+	<div id="mumiwhy" title="export to Gallery Mode"></div>
 	<div id="log"></div>
 </body>
 </html>
