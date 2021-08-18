@@ -12,7 +12,7 @@
 <meta charset="utf-8" />
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
 <script src="/magireco/NAgitan/js/jszip.min.js" integrity="sha512-xQBQYt9UcgblF6aCMrwU1NkVA7HCXaSN2oq0so80KO+y68M+n64FOcqgav4igHe6D5ObBLIf68DWv+gfBowczg=="></script>
-<link rel="stylesheet" href="https://magica-us.com/qb/step.css" integrity="sha512-kyTL+K/vwFmPtZvzEwCUfmYwc6IUMtwtbumtgBHJIvyLbL1rh2me6aP3tsCn5XJ0HX1fdO9A2ZCM8ryjzd+Eyw==" crossorigin="anonymous" />
+<link href="https://magica-us.com/qb/step.css" integrity="sha512-kyTL+K/vwFmPtZvzEwCUfmYwc6IUMtwtbumtgBHJIvyLbL1rh2me6aP3tsCn5XJ0HX1fdO9A2ZCM8ryjzd+Eyw==" crossorigin="anonymous" rel="stylesheet" />
 <script src="https://magica-us.com/qb/step.js" integrity="sha512-OSeoWV6N9DhfZ7hXVXHENrxJUjFz5ZXB72O+/gT5howtU4e/QQrzs88+W7rmSfQTzFcz4E90JBCwwlZkkuK0CQ==" crossorigin="anonymous"></script>
 <script>"use strict";
 function play_happy_sound() {
@@ -42,7 +42,7 @@ const _ = {
 	},
 	drop_soul: {
 		change: soul => (_.progress("got file", true), soul.target.files[0] == null ? _.progress("bad file") : JSZip.loadAsync(soul.target.files[0])
-		.then(zip => Promise.all(Object.keys(_.userdata).map(f => ({name:f,file:zip.file("user/"+f+".json")})).map(f => f.file == null ? _.progress("file not found: "+f.name) : (_.log("extracting "+f.name), f.file.async("string")))))
+		.then(z => Promise.all(Object.keys(_.userdata).map(n => ({n,f:z.file("user/"+n+".json")})).map(d => d.f == null ? _.progress("file not found: "+d.n) : (_.log("extracting "+d.n), d.f.async("string")))))
 		.then(d => _.progress(Object.keys(_.userdata).every((f, n) => d[n] ? (_.log("parsing "+f), _.userdata[f] = JSON.parse(d[n])) : _.progress(f+" is mandatory")) ? (_.log("exhuming M-girls", 'warn'),
 			['country', 'createdAt', 'loginName'].forEach(ㅇ => $('#user_'+ㅇ+' > .v').text(_.userdata.user[ㅇ])),
 			['inviteCode', 'level', 'comment'].forEach(ㅇ => $('#gameuser_'+ㅇ+' > .v').text(_.userdata.gameUser[ㅇ])),
