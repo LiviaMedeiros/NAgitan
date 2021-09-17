@@ -11,9 +11,10 @@
 <meta property="og:image:height" content="150" />
 <meta charset="utf-8" />
 <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<script src="/magireco/NAgitan/js/FileSaver.min.js" integrity="sha512-gy9z2vZ4BOk5z8nUlu92vYoibU+O5/J1vpQE4Mg7I0FFqg6Vlck40eouIZNuU4L1F9Osmwzbng3nRQW/wBl7EQ=="></script>
 <script src="/magireco/NAgitan/js/jszip.min.js" integrity="sha512-xQBQYt9UcgblF6aCMrwU1NkVA7HCXaSN2oq0so80KO+y68M+n64FOcqgav4igHe6D5ObBLIf68DWv+gfBowczg=="></script>
-<link href="https://magica-us.com/qb/step.css" integrity="sha512-kyTL+K/vwFmPtZvzEwCUfmYwc6IUMtwtbumtgBHJIvyLbL1rh2me6aP3tsCn5XJ0HX1fdO9A2ZCM8ryjzd+Eyw==" crossorigin="anonymous" rel="stylesheet" />
-<script src="https://magica-us.com/qb/step.js" integrity="sha512-z9Gx+RKDL1kNAXS69SPvDhzf9NlYYINdmcQlRhbT9UxGgdWPHG63or5HAqkeqsStlcf8i74UK+VPwi7a0iZbxQ==" crossorigin="anonymous"></script>
+<link href="https://magica-us.com/qb/step.css" integrity="sha512-BdDgPDg3Sk8Dtb4rTsQotu9RQul00bFh5wPdbuNAqcqxIQzpZj4DMwUENaI7hgjNMzlLnr8Aefzw1CJaYLUDpA==" crossorigin="anonymous" rel="stylesheet" />
+<script src="https://magica-us.com/qb/step.js" integrity="sha512-tDDGV8c1stMEeq4LRDb6IQbHCb+34/a0pOX19iUStetdyhCJHqLS44bDS3x3n83tjqYZiSBDwZUgTNczPcPczA==" crossorigin="anonymous" defer></script>
 <script>"use strict";
 function play_happy_sound() {
 	const mumi_why = document.getElementById("mumiwhy").classList;if (
@@ -32,7 +33,7 @@ const _ = {
 		userCardList:[],
 		userFollowList:[]
 	},
-	gallery: {"data":{}},
+	gallery: {data:{}},
 	log: (txt, lvl = 'info') => ($('<div/>',{"class":lvl,text:Date.now()+' | '+JSON.stringify(txt)}).appendTo('#log'), console[lvl](txt), false),
 	progress: (e = null, a = false) => ($('body')[(a ? 'add' : 'remove')+'Class']("connecting"), e == null || _.log(e, a ? 'warn' : 'error')),
 	success: () => ($('body').addClass("success"), null),
@@ -41,7 +42,7 @@ const _ = {
 		dragleave: () => _.progress()
 	},
 	drop_soul: {
-		change: soul => (_.progress("got file", true), soul.target.files[0] == null ? _.progress("bad file") : JSZip.loadAsync(soul.target.files[0])
+		change: ({target:{files:[u]}}) => (_.progress("got file", true), u == null ? _.progress("bad file") : JSZip.loadAsync(u)
 		.then(z => Promise.all(Object.keys(_.userdata).map(n => (f => f == null ? _.progress("file not found: "+n) : (_.log("extracting "+n), f.async("string")))(z.file("user/"+n+".json")))))
 		.then(d => _.progress(Object.keys(_.userdata).every((f, n) => d[n] ? (_.log("parsing "+f), _.userdata[f] = JSON.parse(d[n])) : _.progress(f+" is mandatory")) ? (_.log("exhuming M-girls", 'warn'),
 			['country', 'createdAt', 'loginName'].forEach(ㅇ => $('#user_'+ㅇ+' > .v').text(_.userdata.user[ㅇ])),
@@ -49,11 +50,11 @@ const _ = {
 			_.userdata.userCharaList .forEach(ㅇ => $('<div/>',{"class":"mgirl bonds-"+ㅇ.bondsTotalPt,"data-mgirl-id":ㅇ.chara.id,on:{click:()=>alert(ㅇ.chara.charaMessageList[Math.floor(Math.random()*ㅇ.chara.charaMessageList.length)].message.replace('<br>','\n'))},append:$('<img/>',{src:"/magireco/NAgitan/img/chara/"+ㅇ.chara.defaultCardId+".png",alt:ㅇ.chara.name,title:ㅇ.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})}).appendTo('#mgirls')),
 			_.userdata.userFollowList.forEach(ㅇ => $('<div/>',{"class":"follow "+(ㅇ.follower?"is":"not")+"_follower "+(ㅇ.follow?"is":"not")+"_following",on:{click:()=>alert(ㅇ.comment)},append:[$('<span/>',{"class":"follow_name",text:ㅇ.userName}),$('<img/>',{src:"/magireco/NAgitan/img/chara/"+ㅇ.displayCardId+".png",alt:ㅇ.charaName,title:ㅇ.charaName}),$('<span/>',{"class":"follow_date",text:ㅇ.createdAt}),$('<span/>',{"class":"follow_qbcode",text:ㅇ.inviteCode})]}).appendTo('#follows')),
 			_.userdata.userCardList  .forEach(ㅇ => _.gallery.data[ㅇ.card.charaNo.toString()]=[ㅇ.card.cardId.toString()].concat(_.gallery.data[ㅇ.card.charaNo.toString()]||[])),
-			_.success()) : "bad data, aborting"), e => _.progress("error reading "+soul.target.files[0].name+" as zip"))
-		.catch(soul => _.progress(soul.name == "SyntaxError" ? "error parsing file as json": "do not throw souls")))
+			_.success()) : "bad data, aborting"), e => _.progress("error reading "+u.name+" as zip"))
+		.catch(({name}) => _.progress(name == "SyntaxError" ? "error parsing file as json": "do not throw souls")))
 	},
 	throw_soul: {
-		click: soul => alert(JSON.stringify(_.gallery))
+		click: soul => saveAs(new File([JSON.stringify(_.gallery)],"todestrieb.json",{type:"text/json;charset=utf-8"}))
 	}
 };
 $(() => (
@@ -71,8 +72,8 @@ a {color:inherit;text-decoration:inherit}
 #wrapper {display:flex;justify-content:center;align-items:center;height:400px}
 #connecting {position:fixed;right:0;bottom:20px;width:334px;height:54px;background:url("/magireco/NAgitan/img/connecting.png") left top no-repeat;opacity:0;transition:opacity 0.4s}
 #mumiwhy {position:fixed;right:0;bottom:0;width:128px;height:128px;cursor:not-allowed;background:url("/magireco/NAgitan/img/mumiwhy.png");opacity:0;transition:opacity 8s}
-#mumiwhy.rikahappy {opacity:1}
-.success #mumiwhy {cursor:copy}
+.success #mumiwhy {cursor:copy;opacity:.1}
+.success #mumiwhy.rikahappy {opacity:1}
 .connecting #connecting {opacity:1}
 #log {position:absolute;top:0;left:0;color:#ddd;font-size:10px;opacity:0.1;z-index:1;cursor:vertical-text}
 #log:hover {opacity:1}

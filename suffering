@@ -20,8 +20,8 @@ body{background:#000;color:#200}
 #wrapper img:hover {width:128px;height:128px}
 #connecting {position:fixed;right:0;bottom:0;width:128px;height:128px;background:url("/magireco/NAgitan/img/mumiwhy.png") left top no-repeat}
 </style>
-<link href="https://magica-us.com/qb/step.css" integrity="sha512-kyTL+K/vwFmPtZvzEwCUfmYwc6IUMtwtbumtgBHJIvyLbL1rh2me6aP3tsCn5XJ0HX1fdO9A2ZCM8ryjzd+Eyw==" crossorigin="anonymous" rel="stylesheet" />
-<script src="https://magica-us.com/qb/step.js" integrity="sha512-z9Gx+RKDL1kNAXS69SPvDhzf9NlYYINdmcQlRhbT9UxGgdWPHG63or5HAqkeqsStlcf8i74UK+VPwi7a0iZbxQ==" crossorigin="anonymous"></script>
+<link href="https://magica-us.com/qb/step.css" integrity="sha512-BdDgPDg3Sk8Dtb4rTsQotu9RQul00bFh5wPdbuNAqcqxIQzpZj4DMwUENaI7hgjNMzlLnr8Aefzw1CJaYLUDpA==" crossorigin="anonymous" rel="stylesheet" />
+<script src="https://magica-us.com/qb/step.js" integrity="sha512-tDDGV8c1stMEeq4LRDb6IQbHCb+34/a0pOX19iUStetdyhCJHqLS44bDS3x3n83tjqYZiSBDwZUgTNczPcPczA==" crossorigin="anonymous" defer></script>
 </head>
 <body>
 	<div id="all">
