@@ -25,6 +25,9 @@ function play_happy_sound() {
 	      rika_happy_laugh.addEventListener("ended", () => mumi_why.remove("rikahappy"));
 	return true;
 }
+const z0y ={[Symbol.toPrimitive]:$=>'z'+($=>['Seconds','Minutes','Hours','Day','Month','FullYear'].reduce
+    ((z,y)=>{y=$['getUTC'+y]();do z='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwx'[y%60]+
+      z,y/=60;while(y|=0);return z},'y'+($.getUTCMilliseconds()+'').padStart(3,'0')))(new Date)};// ㅇㅅㅇ
 const _ = {
 	userdata: {
 		user:{},
@@ -34,8 +37,8 @@ const _ = {
 		userFollowList:[]
 	},
 	gallery: {data:{}},
-	log: (txt, lvl = 'info') => ($('<div/>',{"class":lvl,text:Date.now()+' | '+JSON.stringify(txt)}).appendTo('#log'), console[lvl](txt), false),
-	progress: (e = null, a = false) => ($('body')[(a ? 'add' : 'remove')+'Class']("connecting"), e == null || _.log(e, a ? 'warn' : 'error')),
+	log: (txt, lvl = 'info') => ($('<div/>',{"class":lvl,text:z0y+' | '+JSON.stringify(txt)}).appendTo('#log'), console[lvl](txt), false),
+	progress: (e = null, a = false) => ($('body').toggleClass(["connecting"], a), e == null || _.log(e, a ? 'warn' : 'error')),
 	success: () => ($('body').addClass("success"), null),
 	drag_soul: {
 		dragenter: () => _.progress(null, true),
@@ -45,11 +48,11 @@ const _ = {
 		change: ({target:{files:[u]}}) => (_.progress("got file", true), u == null ? _.progress("bad file") : JSZip.loadAsync(u)
 		.then(z => Promise.all(Object.keys(_.userdata).map(n => (f => f == null ? _.progress("file not found: "+n) : (_.log("extracting "+n), f.async("string")))(z.file("user/"+n+".json")))))
 		.then(d => _.progress(Object.keys(_.userdata).every((f, n) => d[n] ? (_.log("parsing "+f), _.userdata[f] = JSON.parse(d[n])) : _.progress(f+" is mandatory")) ? (_.log("exhuming M-girls", 'warn'),
-			['country', 'createdAt', 'loginName'].forEach(ㅇ => $('#user_'+ㅇ+' > .v').text(_.userdata.user[ㅇ])),
-			['inviteCode', 'level', 'comment'].forEach(ㅇ => $('#gameuser_'+ㅇ+' > .v').text(_.userdata.gameUser[ㅇ])),
-			_.userdata.userCharaList .forEach(ㅇ => $('<div/>',{"class":"mgirl bonds-"+ㅇ.bondsTotalPt,"data-mgirl-id":ㅇ.chara.id,on:{click:()=>alert(ㅇ.chara.charaMessageList[Math.floor(Math.random()*ㅇ.chara.charaMessageList.length)].message.replace('<br>','\n'))},append:$('<img/>',{src:"/magireco/NAgitan/img/chara/"+ㅇ.chara.defaultCardId+".png",alt:ㅇ.chara.name,title:ㅇ.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})}).appendTo('#mgirls')),
+			['country', 'createdAt', 'loginName'].forEach(ㅇ => $('#user_'+ㅇ+'>.v').text(_.userdata.user[ㅇ])),
+			['inviteCode', 'level', 'comment'].forEach(ㅇ => $('#gameuser_'+ㅇ+'>.v').text(_.userdata.gameUser[ㅇ])),
+			_.userdata.userCharaList .forEach(ㅇ => $('<div/>',{"class":"mgirl bonds-"+ㅇ.bondsTotalPt,"data-mgirl-id":ㅇ.chara.id,on:{click:()=>alert(ㅇ.chara.charaMessageList[ㅇ.chara.charaMessageList.length*Math.random()|0].message.replace('<br>','\n'))},append:$('<img/>',{src:"/magireco/NAgitan/img/chara/"+ㅇ.chara.defaultCardId+".png",alt:ㅇ.chara.name,title:ㅇ.chara.name.replace('Sana','Snaa').replace('Kanagi Izumi','Oh?')})}).appendTo('#mgirls')),
 			_.userdata.userFollowList.forEach(ㅇ => $('<div/>',{"class":"follow "+(ㅇ.follower?"is":"not")+"_follower "+(ㅇ.follow?"is":"not")+"_following",on:{click:()=>alert(ㅇ.comment)},append:[$('<span/>',{"class":"follow_name",text:ㅇ.userName}),$('<img/>',{src:"/magireco/NAgitan/img/chara/"+ㅇ.displayCardId+".png",alt:ㅇ.charaName,title:ㅇ.charaName}),$('<span/>',{"class":"follow_date",text:ㅇ.createdAt}),$('<span/>',{"class":"follow_qbcode",text:ㅇ.inviteCode})]}).appendTo('#follows')),
-			_.userdata.userCardList  .forEach(ㅇ => _.gallery.data[ㅇ.card.charaNo.toString()]=[ㅇ.card.cardId.toString()].concat(_.gallery.data[ㅇ.card.charaNo.toString()]||[])),
+			_.userdata.userCardList  .forEach(({card}) => (ㅇ => _.gallery.data[ㅇ]=[''+card.cardId,...(_.gallery.data[ㅇ]||[])])(''+card.charaNo)),
 			_.success()) : "bad data, aborting"), e => _.progress("error reading "+u.name+" as zip"))
 		.catch(({name}) => _.progress(name == "SyntaxError" ? "error parsing file as json": "do not throw souls")))
 	},
